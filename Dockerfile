@@ -1,4 +1,4 @@
-FROM ghcr.io/linuxserver/baseimage-kasmvnc:debianbookworm
+FROM ghcr.io/linuxserver/baseimage-selkies:ubuntunoble
 
 # set version label
 ARG BUILD_DATE
@@ -9,10 +9,12 @@ LABEL maintainer="thelamer"
 
 # title
 ENV TITLE=OrcaSlicer \
+    HOME="/config" \
     SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
 RUN \
   echo "**** add icon ****" && \
+  mkdir -p /kclient/public && \
   curl -o \
     /kclient/public/icon.png \
     https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/orcaslicer-logo.png && \
@@ -20,7 +22,7 @@ RUN \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive \
   apt-get install --no-install-recommends -y \
-    firefox-esr \
+    chromium \
     gstreamer1.0-alsa \
     gstreamer1.0-gl \
     gstreamer1.0-gtk3 \
@@ -36,7 +38,7 @@ RUN \
     libgstreamer1.0 \
     libgstreamer-plugins-bad1.0 \
     libgstreamer-plugins-base1.0 \
-    libwebkit2gtk-4.0-37 \
+    libwebkit2gtk-4.1-0 \
     libwx-perl && \
   echo "**** install oracaslicer from appimage ****" && \
   if [ -z ${ORCASLICER_VERSION+x} ]; then \
@@ -63,5 +65,4 @@ RUN \
 COPY /root /
 
 # ports and volumes
-EXPOSE 3000
 VOLUME /config
