@@ -1,3 +1,4 @@
+
 FROM ghcr.io/linuxserver/baseimage-selkies:ubuntunoble
 
 # set version label
@@ -9,7 +10,10 @@ LABEL maintainer="thelamer"
 
 # title
 ENV TITLE=OrcaSlicer \
+    CUSTOM_PORT="8080" \
+    CUSTOM_HTTPS_PORT="8181" \
     HOME="/config" \
+    QTWEBENGINE_DISABLE_SANDBOX="1" \
     SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
 RUN \
@@ -55,11 +59,14 @@ RUN \
   echo "**** cleanup ****" && \
   apt-get autoclean && \
   rm -rf \
-    /config/.cache \
-    /config/.launchpadlib \
-    /var/lib/apt/lists/* \
-    /var/tmp/* \
-    /tmp/*
+  /config/.cache \
+  /config/.launchpadlib \
+  /var/lib/apt/lists/* \
+  /var/tmp/* \
+  /tmp/* && \
+  echo "**** link webkit2gtk-4.0-37 ****" && \
+  ln -fs /usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.1-0.so.37 /usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.0-37.so && \
+  ln -fs /usr/lib/x86_64-linux-gnu/libjavascriptcoregtk-4.1.so.0 /usr/lib/x86_64-linux-gnu/libjavascriptcoregtk-4.0.so.18
 
 # add local files
 COPY /root /
